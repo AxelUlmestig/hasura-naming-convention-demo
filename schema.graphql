@@ -18,14 +18,10 @@ columns and relationships of "friends"
 """
 type Friends {
   age: smallint!
-
-  """An object relationship"""
-  bestFriend: Friends
   bestFriendId: Int
-  id: Int!
 
   """An array relationship"""
-  incomingBestFriends(
+  bestFriends(
     """distinct select on columns"""
     distinctOn: [FriendsSelectColumn!]
 
@@ -43,7 +39,7 @@ type Friends {
   ): [Friends!]!
 
   """An aggregate relationship"""
-  incomingBestFriendsAggregate(
+  bestFriendsAggregate(
     """distinct select on columns"""
     distinctOn: [FriendsSelectColumn!]
 
@@ -59,6 +55,7 @@ type Friends {
     """filter the rows returned"""
     where: FriendsBoolExp
   ): FriendsAggregate!
+  id: Int!
   name: String!
 }
 
@@ -138,10 +135,9 @@ input FriendsBoolExp {
   _not: FriendsBoolExp
   _or: [FriendsBoolExp!]
   age: SmallintComparisonExp
-  bestFriend: FriendsBoolExp
   bestFriendId: IntComparisonExp
+  bestFriends: FriendsBoolExp
   id: IntComparisonExp
-  incomingBestFriends: FriendsBoolExp
   name: StringComparisonExp
 }
 
@@ -169,10 +165,9 @@ input type for inserting data into table "friends"
 """
 input FriendsInsertInput {
   age: smallint
-  bestFriend: FriendsObjRelInsertInput
   bestFriendId: Int
+  bestFriends: FriendsArrRelInsertInput
   id: Int
-  incomingBestFriends: FriendsArrRelInsertInput
   name: String
 }
 
@@ -224,16 +219,6 @@ type FriendsMutationResponse {
 }
 
 """
-input type for inserting object relation for remote table "friends"
-"""
-input FriendsObjRelInsertInput {
-  data: FriendsInsertInput!
-
-  """upsert condition"""
-  onConflict: FriendsOnConflict
-}
-
-"""
 on_conflict condition type for table "friends"
 """
 input FriendsOnConflict {
@@ -245,10 +230,9 @@ input FriendsOnConflict {
 """Ordering options when selecting data from "friends"."""
 input FriendsOrderBy {
   age: OrderBy
-  bestFriend: FriendsOrderBy
   bestFriendId: OrderBy
+  bestFriendsAggregate: FriendsAggregateOrderBy
   id: OrderBy
-  incomingBestFriendsAggregate: FriendsAggregateOrderBy
   name: OrderBy
 }
 
