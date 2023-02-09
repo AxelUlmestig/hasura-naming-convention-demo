@@ -1,0 +1,11 @@
+table:
+  name: friends
+  schema: public
+array_relationships:
+  - name: bestFriends
+    using:
+      foreign_key_constraint_on:
+        column: best_friend_id
+        table:
+          name: friends
+          schema: public
