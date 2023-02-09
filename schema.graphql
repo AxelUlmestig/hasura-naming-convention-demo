@@ -1,0 +1,692 @@
+schema {
+  query: query_root
+  mutation: mutation_root
+  subscription: subscription_root
+}
+
+"""whether this query should be cached (Hasura Cloud only)"""
+directive @cached(
+  """measured in seconds"""
+  ttl: Int! = 60
+
+  """refresh the cache entry"""
+  refresh: Boolean! = false
+) on QUERY
+
+"""
+columns and relationships of "friends"
+"""
+type Friends {
+  age: smallint!
+
+  """An object relationship"""
+  bestFriend: Friends
+  bestFriendId: Int
+  id: Int!
+
+  """An array relationship"""
+  incomingBestFriends(
+    """distinct select on columns"""
+    distinctOn: [FriendsSelectColumn!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [FriendsOrderBy!]
+
+    """filter the rows returned"""
+    where: FriendsBoolExp
+  ): [Friends!]!
+
+  """An aggregate relationship"""
+  incomingBestFriendsAggregate(
+    """distinct select on columns"""
+    distinctOn: [FriendsSelectColumn!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [FriendsOrderBy!]
+
+    """filter the rows returned"""
+    where: FriendsBoolExp
+  ): FriendsAggregate!
+  name: String!
+}
+
+"""
+aggregated selection of "friends"
+"""
+type FriendsAggregate {
+  aggregate: FriendsAggregateFields
+  nodes: [Friends!]!
+}
+
+"""
+aggregate fields of "friends"
+"""
+type FriendsAggregateFields {
+  avg: FriendsAvgFields
+  count(columns: [FriendsSelectColumn!], distinct: Boolean): Int!
+  max: FriendsMaxFields
+  min: FriendsMinFields
+  stddev: FriendsStddevFields
+  stddevPop: FriendsStddevPopFields
+  stddevSamp: FriendsStddevSampFields
+  sum: FriendsSumFields
+  varPop: FriendsVarPopFields
+  varSamp: FriendsVarSampFields
+  variance: FriendsVarianceFields
+}
+
+"""
+order by aggregate values of table "friends"
+"""
+input FriendsAggregateOrderBy {
+  avg: FriendsAvgOrderBy
+  count: OrderBy
+  max: FriendsMaxOrderBy
+  min: FriendsMinOrderBy
+  stddev: FriendsStddevOrderBy
+  stddev_pop: FriendsStddevPopOrderBy
+  stddev_samp: FriendsStddevSampOrderBy
+  sum: FriendsSumOrderBy
+  var_pop: FriendsVarPopOrderBy
+  var_samp: FriendsVarSampOrderBy
+  variance: FriendsVarianceOrderBy
+}
+
+"""
+input type for inserting array relation for remote table "friends"
+"""
+input FriendsArrRelInsertInput {
+  data: [FriendsInsertInput!]!
+
+  """upsert condition"""
+  onConflict: FriendsOnConflict
+}
+
+"""aggregate avg on columns"""
+type FriendsAvgFields {
+  age: Float
+  bestFriendId: Float
+  id: Float
+}
+
+"""
+order by avg() on columns of table "friends"
+"""
+input FriendsAvgOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+}
+
+"""
+Boolean expression to filter rows from the table "friends". All fields are combined with a logical 'AND'.
+"""
+input FriendsBoolExp {
+  _and: [FriendsBoolExp!]
+  _not: FriendsBoolExp
+  _or: [FriendsBoolExp!]
+  age: SmallintComparisonExp
+  bestFriend: FriendsBoolExp
+  bestFriendId: IntComparisonExp
+  id: IntComparisonExp
+  incomingBestFriends: FriendsBoolExp
+  name: StringComparisonExp
+}
+
+"""
+unique or primary key constraints on table "friends"
+"""
+enum FriendsConstraint {
+  """
+  unique or primary key constraint on columns "id"
+  """
+  friends_pkey
+}
+
+"""
+input type for incrementing numeric columns in table "friends"
+"""
+input FriendsIncInput {
+  age: smallint
+  bestFriendId: Int
+  id: Int
+}
+
+"""
+input type for inserting data into table "friends"
+"""
+input FriendsInsertInput {
+  age: smallint
+  bestFriend: FriendsObjRelInsertInput
+  bestFriendId: Int
+  id: Int
+  incomingBestFriends: FriendsArrRelInsertInput
+  name: String
+}
+
+"""aggregate max on columns"""
+type FriendsMaxFields {
+  age: smallint
+  bestFriendId: Int
+  id: Int
+  name: String
+}
+
+"""
+order by max() on columns of table "friends"
+"""
+input FriendsMaxOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+  name: OrderBy
+}
+
+"""aggregate min on columns"""
+type FriendsMinFields {
+  age: smallint
+  bestFriendId: Int
+  id: Int
+  name: String
+}
+
+"""
+order by min() on columns of table "friends"
+"""
+input FriendsMinOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+  name: OrderBy
+}
+
+"""
+response of any mutation on the table "friends"
+"""
+type FriendsMutationResponse {
+  """number of rows affected by the mutation"""
+  affected_rows: Int!
+
+  """data from the rows affected by the mutation"""
+  returning: [Friends!]!
+}
+
+"""
+input type for inserting object relation for remote table "friends"
+"""
+input FriendsObjRelInsertInput {
+  data: FriendsInsertInput!
+
+  """upsert condition"""
+  onConflict: FriendsOnConflict
+}
+
+"""
+on_conflict condition type for table "friends"
+"""
+input FriendsOnConflict {
+  constraint: FriendsConstraint!
+  update_columns: [FriendsUpdateColumn!]! = []
+  where: FriendsBoolExp
+}
+
+"""Ordering options when selecting data from "friends"."""
+input FriendsOrderBy {
+  age: OrderBy
+  bestFriend: FriendsOrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+  incomingBestFriendsAggregate: FriendsAggregateOrderBy
+  name: OrderBy
+}
+
+"""primary key columns input for table: friends"""
+input FriendsPkColumnsInput {
+  id: Int!
+}
+
+"""
+select columns of table "friends"
+"""
+enum FriendsSelectColumn {
+  """column name"""
+  age
+
+  """column name"""
+  bestFriendId
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+}
+
+"""
+input type for updating data in table "friends"
+"""
+input FriendsSetInput {
+  age: smallint
+  bestFriendId: Int
+  id: Int
+  name: String
+}
+
+"""aggregate stddev on columns"""
+type FriendsStddevFields {
+  age: Float
+  bestFriendId: Float
+  id: Float
+}
+
+"""
+order by stddev() on columns of table "friends"
+"""
+input FriendsStddevOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+}
+
+"""aggregate stddev_pop on columns"""
+type FriendsStddevPopFields {
+  age: Float
+  bestFriendId: Float
+  id: Float
+}
+
+"""
+order by stddev_pop() on columns of table "friends"
+"""
+input FriendsStddevPopOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+}
+
+"""aggregate stddev_samp on columns"""
+type FriendsStddevSampFields {
+  age: Float
+  bestFriendId: Float
+  id: Float
+}
+
+"""
+order by stddev_samp() on columns of table "friends"
+"""
+input FriendsStddevSampOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+}
+
+"""aggregate sum on columns"""
+type FriendsSumFields {
+  age: smallint
+  bestFriendId: Int
+  id: Int
+}
+
+"""
+order by sum() on columns of table "friends"
+"""
+input FriendsSumOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+}
+
+"""
+update columns of table "friends"
+"""
+enum FriendsUpdateColumn {
+  """column name"""
+  age
+
+  """column name"""
+  bestFriendId
+
+  """column name"""
+  id
+
+  """column name"""
+  name
+}
+
+input FriendsUpdates {
+  """increments the numeric columns with given value of the filtered values"""
+  _inc: FriendsIncInput
+
+  """sets the columns of the filtered rows to the given values"""
+  _set: FriendsSetInput
+  where: FriendsBoolExp!
+}
+
+"""aggregate var_pop on columns"""
+type FriendsVarPopFields {
+  age: Float
+  bestFriendId: Float
+  id: Float
+}
+
+"""
+order by var_pop() on columns of table "friends"
+"""
+input FriendsVarPopOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+}
+
+"""aggregate var_samp on columns"""
+type FriendsVarSampFields {
+  age: Float
+  bestFriendId: Float
+  id: Float
+}
+
+"""
+order by var_samp() on columns of table "friends"
+"""
+input FriendsVarSampOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+}
+
+"""aggregate variance on columns"""
+type FriendsVarianceFields {
+  age: Float
+  bestFriendId: Float
+  id: Float
+}
+
+"""
+order by variance() on columns of table "friends"
+"""
+input FriendsVarianceOrderBy {
+  age: OrderBy
+  bestFriendId: OrderBy
+  id: OrderBy
+}
+
+"""
+Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
+"""
+input IntComparisonExp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _isNull: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
+}
+
+"""column ordering options"""
+enum OrderBy {
+  """in ascending order, nulls last"""
+  ASC
+
+  """in ascending order, nulls first"""
+  ASC_NULLS_FIRST
+
+  """in ascending order, nulls last"""
+  ASC_NULLS_LAST
+
+  """in descending order, nulls first"""
+  DESC
+
+  """in descending order, nulls first"""
+  DESC_NULLS_FIRST
+
+  """in descending order, nulls last"""
+  DESC_NULLS_LAST
+}
+
+"""
+Boolean expression to compare columns of type "smallint". All fields are combined with logical 'AND'.
+"""
+input SmallintComparisonExp {
+  _eq: smallint
+  _gt: smallint
+  _gte: smallint
+  _in: [smallint!]
+  _isNull: Boolean
+  _lt: smallint
+  _lte: smallint
+  _neq: smallint
+  _nin: [smallint!]
+}
+
+"""
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+"""
+input StringComparisonExp {
+  _eq: String
+  _gt: String
+  _gte: String
+
+  """does the column match the given case-insensitive pattern"""
+  _ilike: String
+  _in: [String!]
+
+  """
+  does the column match the given POSIX regular expression, case insensitive
+  """
+  _iregex: String
+  _isNull: Boolean
+
+  """does the column match the given pattern"""
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+
+  """does the column NOT match the given case-insensitive pattern"""
+  _nilike: String
+  _nin: [String!]
+
+  """
+  does the column NOT match the given POSIX regular expression, case insensitive
+  """
+  _niregex: String
+
+  """does the column NOT match the given pattern"""
+  _nlike: String
+
+  """
+  does the column NOT match the given POSIX regular expression, case sensitive
+  """
+  _nregex: String
+
+  """does the column NOT match the given SQL regular expression"""
+  _nsimilar: String
+
+  """
+  does the column match the given POSIX regular expression, case sensitive
+  """
+  _regex: String
+
+  """does the column match the given SQL regular expression"""
+  _similar: String
+}
+
+"""mutation root"""
+type mutation_root {
+  """
+  delete data from the table: "friends"
+  """
+  deleteFriends(
+    """filter the rows which have to be deleted"""
+    where: FriendsBoolExp!
+  ): FriendsMutationResponse
+
+  """
+  delete single row from the table: "friends"
+  """
+  deleteFriendsByPk(id: Int!): Friends
+
+  """
+  insert data into the table: "friends"
+  """
+  insertFriends(
+    """the rows to be inserted"""
+    objects: [FriendsInsertInput!]!
+
+    """upsert condition"""
+    onConflict: FriendsOnConflict
+  ): FriendsMutationResponse
+
+  """
+  insert a single row into the table: "friends"
+  """
+  insertFriendsOne(
+    """the row to be inserted"""
+    object: FriendsInsertInput!
+
+    """upsert condition"""
+    onConflict: FriendsOnConflict
+  ): Friends
+
+  """
+  update data of the table: "friends"
+  """
+  updateFriends(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: FriendsIncInput
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: FriendsSetInput
+
+    """filter the rows which have to be updated"""
+    where: FriendsBoolExp!
+  ): FriendsMutationResponse
+
+  """
+  update single row of the table: "friends"
+  """
+  updateFriendsByPk(
+    """increments the numeric columns with given value of the filtered values"""
+    _inc: FriendsIncInput
+
+    """sets the columns of the filtered rows to the given values"""
+    _set: FriendsSetInput
+    pk_columns: FriendsPkColumnsInput!
+  ): Friends
+
+  """
+  update multiples rows of table: "friends"
+  """
+  updateFriendsMany(
+    """updates to execute, in order"""
+    updates: [FriendsUpdates!]!
+  ): [FriendsMutationResponse]
+}
+
+type query_root {
+  """
+  fetch data from the table: "friends"
+  """
+  friends(
+    """distinct select on columns"""
+    distinctOn: [FriendsSelectColumn!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [FriendsOrderBy!]
+
+    """filter the rows returned"""
+    where: FriendsBoolExp
+  ): [Friends!]!
+
+  """
+  fetch aggregated fields from the table: "friends"
+  """
+  friendsAggregate(
+    """distinct select on columns"""
+    distinctOn: [FriendsSelectColumn!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [FriendsOrderBy!]
+
+    """filter the rows returned"""
+    where: FriendsBoolExp
+  ): FriendsAggregate!
+
+  """fetch data from the table: "friends" using primary key columns"""
+  friendsByPk(id: Int!): Friends
+}
+
+scalar smallint
+
+type subscription_root {
+  """
+  fetch data from the table: "friends"
+  """
+  friends(
+    """distinct select on columns"""
+    distinctOn: [FriendsSelectColumn!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [FriendsOrderBy!]
+
+    """filter the rows returned"""
+    where: FriendsBoolExp
+  ): [Friends!]!
+
+  """
+  fetch aggregated fields from the table: "friends"
+  """
+  friendsAggregate(
+    """distinct select on columns"""
+    distinctOn: [FriendsSelectColumn!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    orderBy: [FriendsOrderBy!]
+
+    """filter the rows returned"""
+    where: FriendsBoolExp
+  ): FriendsAggregate!
+
+  """fetch data from the table: "friends" using primary key columns"""
+  friendsByPk(id: Int!): Friends
+}
+

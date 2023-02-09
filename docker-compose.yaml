@@ -1,0 +1,46 @@
+version: '3.4'
+
+services:
+  db:
+    build:
+      context: .
+      dockerfile: db/postgres.Dockerfile
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: db
+      POSTGRES_PASSWORD: hunter2
+      POSTGRES_USER: postgres
+    volumes:
+      - dbdata:/var/lib/postgresql/data
+      - .:/repo
+      - ~/.sqitch:/root/.sqitch
+    working_dir: /repo
+
+  graphql-engine:
+    image: hasura/graphql-engine:v2.10.2.cli-migrations-v2
+    ports:
+    - "8080:8080"
+    depends_on:
+    - "db"
+    restart: always
+    volumes:
+      - ./hasura-config:/hasura-config
+    environment:
+      HASURA_GRAPHQL_DATABASE_URL: postgres://postgres:hunter2@db:5432/db
+      HASURA_GRAPHQL_ENABLE_CONSOLE: "true" # set to "false" to disable console
+      HASURA_GRAPHQL_ADMIN_SECRET: admin
+
+      HASURA_GRAPHQL_VERSION: 3
+      HASURA_GRAPHQL_ENDPOINT: http://localhost:8080
+      HASURA_GRAPHQL_JWT_SECRET: >-
+        {
+          "type": "HS256",
+          "key": "jwt_secret_that_is_at_least_thirtytwo_characters",
+          "allowed_skew": 2
+        }
+      HASURA_GRAPHQL_EXPERIMENTAL_FEATURES: naming_convention
+      HASURA_GRAPHQL_DEFAULT_NAMING_CONVENTION: graphql-default
+
+volumes:
+  dbdata:
