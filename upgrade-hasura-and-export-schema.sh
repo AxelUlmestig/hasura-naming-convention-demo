@@ -31,4 +31,5 @@ echo "waiting 10 seconds for Hasura to restart..."
 sleep 10
 
 # export the schema
+# This relies on `gq` being installed. Run `npm install -g graphqurl` if it's not installed
 gq http://127.0.0.1:8080/v1/graphql -H 'x-hasura-admin-secret: admin' --introspect > schema.graphql
